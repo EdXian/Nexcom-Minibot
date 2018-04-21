@@ -26,15 +26,17 @@ ENDIF()
 SET(GLOB Headers_ include/*.h)
 SET(GLOB Sources_ include/*.cpp)
 
+
+
 #匯入Header文件
 include_directories( 	include
 			${NEXMOTION_INCLUDE_DIR} )			
 #建立自訂議Lib					
-add_library(task  "include/motion_task.h" "include/motion_task.cpp")
+add_library(motion_task  "include/motion_task.h" "include/motion_task.cpp")
 #將相依到程式庫匯入到自訂議Lib
-target_link_libraries(task  ${NEXMOTION_LIBS}/NexMotion.lib    )
+target_link_libraries(motion_task  ${NEXMOTION_LIBS}/NexMotion.lib    )
 				    
 # 將來源新增到此專案的可執行檔。
 add_executable (Nexmo "Nexmo.cpp" "Nexmo.h"  )
 #將相依到程式庫匯入到執行檔
-target_link_libraries(Nexmo ${NEXMOTION_LIBS}/NexMotion.lib  task )					 
+target_link_libraries(Nexmo ${NEXMOTION_LIBS}/NexMotion.lib  motion_task )					 
