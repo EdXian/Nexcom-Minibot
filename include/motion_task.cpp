@@ -308,7 +308,7 @@ bool robot::gotohome() {
 
 
 
-//Task 
+
 bool robot::PTP_Until_Task(Pos_T & target) {
 
 	I32_T Group_Axis_Control_Mask = 0;
@@ -373,8 +373,43 @@ bool robot::LINE_Until_Task(Pos_T & target) {
 
 	return true;
 }
+bool robot::PTP_Queue_Task(Pos_T & target) {
+	I32_T Group_Axis_Control_Mask = 0;
+	Group_Axis_Control_Mask = NMC_GROUP_AXIS_MASK_X | NMC_GROUP_AXIS_MASK_Y | NMC_GROUP_AXIS_MASK_Z |
+		NMC_GROUP_AXIS_MASK_A | NMC_GROUP_AXIS_MASK_B | NMC_GROUP_AXIS_MASK_C;
+
+	int  size = this->get_buffer_size();
+	if (size > 0) {
+		ret = NMC_GroupPtpCartAll(this->retDevID, this->devIndex, Group_Axis_Control_Mask, &target);
+		if (ret != ERR_NEXMOTION_SUCCESS) {
+
+			printf("PTP_Queue_Task error code :  %d\n", ret);
+			return false;
+		}
+	}
+	
+	return true;
+}
+bool robot::LINE_Queue_Task(Pos_T & target) {
+	I32_T Group_Axis_Control_Mask = 0;
+	Group_Axis_Control_Mask = NMC_GROUP_AXIS_MASK_X | NMC_GROUP_AXIS_MASK_Y | NMC_GROUP_AXIS_MASK_Z |
+		NMC_GROUP_AXIS_MASK_A | NMC_GROUP_AXIS_MASK_B | NMC_GROUP_AXIS_MASK_C;
+
+	int  size = this->get_buffer_size();
+	if (size > 0) {
+		NMC_GroupLine(this->retDevID, this->devIndex, Group_Axis_Control_Mask, &target, NULL);
+		if (ret != ERR_NEXMOTION_SUCCESS) {
+
+			printf("PTP_Queue_Task error code :  %d\n", ret);
+			return false;
+		}
+	}
+
+	return true;
 
 
+	return true;
+}
 
 
 int robot::task_a(int x, int y) {
@@ -476,17 +511,7 @@ bool robot::set_mode(int mode) {
 
 
 
-
-
-
-
-
-
-
-
 //getter
-
-
 
 I32_T  robot::get_buffer_size(void) {
 	
@@ -494,6 +519,15 @@ I32_T  robot::get_buffer_size(void) {
 	if (ret != ERR_NEXMOTION_SUCCESS) {
 		printf("get_buffer_size error code :  %d\n", ret);
 	}
+	if (buffer_size == 31) {
+		printf("queue is empty");
+	}
+	else if (buffer_size == 0) {
+		printf("queue is full");
+	}
+
+
+
 	return this->buffer_size;
 }
 
