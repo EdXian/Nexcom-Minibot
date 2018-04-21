@@ -1,5 +1,6 @@
 #include "motion_task.h"
 
+
 robot::robot() {
 
 
@@ -9,6 +10,9 @@ robot::~robot() {
 
 }
 
+
+
+//System
 bool robot::launch(I32_T devType , I32_T  devIndex) {
 
 
@@ -264,7 +268,6 @@ bool robot::terminate() {
 	return true;
 }
 
-
 bool robot::gotohome() {
 
 	I32_T Group_Axis_Control_Mask = 0;
@@ -275,7 +278,7 @@ bool robot::gotohome() {
 
 	if (ret != ERR_NEXMOTION_SUCCESS) {
 
-		printf("PTP_Until_Task error code :  %d\n", ret);
+		printf("gohome error code :  %d\n", ret);
 		return false;
 	}
 
@@ -284,8 +287,9 @@ bool robot::gotohome() {
 	} while (Group_State == NMC_GROUP_STATE_HOMING);
 
 	Sleep(sleep_500ms);
-
+	/*
 	ret = NMC_GroupGetActualPosPcs(this->retDevID, this->devIndex, &actual_pose);
+
 	printf("robot is set to home\n");
 	printf("x = %f \n", actual_pose.pos[0]);
 	printf("y = %f \n", actual_pose.pos[1]);
@@ -294,26 +298,17 @@ bool robot::gotohome() {
 	printf("b = %f \n", actual_pose.pos[4]);
 	printf("c = %f \n", actual_pose.pos[5]);
 
-	return true;
-}
-
-bool robot::setvelratio(float percetage) {
-	if ((percetage > 100.0) || (percetage < 0.0))
-	{
-		printf("SetVelRatio invalid parameter\n ");
-		return false;
-	}
-	else {
-		ret = NMC_GroupSetVelRatio(this->retDevID, this->devIndex, percetage);
-	}
 	
-	if (ret != ERR_NEXMOTION_SUCCESS) {
-		printf("SetVelRatio failed error code \n", ret);
-	}
-
+	*/
+	
 	return true;
 }
 
+
+
+
+
+//Task 
 bool robot::PTP_Until_Task(Pos_T & target) {
 
 	I32_T Group_Axis_Control_Mask = 0;
@@ -337,6 +332,7 @@ bool robot::PTP_Until_Task(Pos_T & target) {
 	} while (Group_State != NMC_GROUP_STATE_STAND_STILL);
 	
 	ret = NMC_GroupGetActualPosPcs(this->retDevID, this->devIndex, &actual_pose);
+	/*
 	printf("PTP task result\n");
 	printf("x = %f \n", actual_pose.pos[0]);
 	printf("y = %f \n", actual_pose.pos[1]);
@@ -344,6 +340,8 @@ bool robot::PTP_Until_Task(Pos_T & target) {
 	printf("a = %f \n", actual_pose.pos[3]);
 	printf("b = %f \n", actual_pose.pos[4]);
 	printf("c = %f \n", actual_pose.pos[5]);
+	*/
+	
 
 
 	return true;
@@ -360,13 +358,19 @@ bool robot::LINE_Until_Task(Pos_T & target) {
 	} while (Group_State != NMC_GROUP_STATE_STAND_STILL);
 
 	ret = NMC_GroupGetActualPosPcs(this->retDevID, this->devIndex, &actual_pose);
-	printf("PTP task result\n");
+	
+	
+	/*
+		printf("LINE task result\n");
 	printf("x = %f \n", actual_pose.pos[0]);
 	printf("y = %f \n", actual_pose.pos[1]);
 	printf("z = %f \n", actual_pose.pos[2]);
 	printf("a = %f \n", actual_pose.pos[3]);
 	printf("b = %f \n", actual_pose.pos[4]);
 	printf("c = %f \n", actual_pose.pos[5]);
+	*/
+
+
 	return true;
 }
 
@@ -381,6 +385,139 @@ int robot::task_a(int x, int y) {
 }
 
 
+//setter
+bool robot::set_velratio(float percetage) {
+	if ((percetage > 100.0) || (percetage < 0.0))
+	{
+		printf("SetVelRatio invalid parameter\n ");
+		return false;
+	}
+	else {
+		ret = NMC_GroupSetVelRatio(this->retDevID, this->devIndex, percetage);
+	}
+
+	if (ret != ERR_NEXMOTION_SUCCESS) {
+		printf("SetVelRatio failed error code \n", ret);
+	}
+
+	return true;
+}
+
+bool robot::set_mode(int mode) {
+
+	if ((mode != robot::Mode::None) || 
+		(mode != robot::Mode::Buffer) ||
+		(mode != robot::Mode::Blending_coner) ||
+		(mode != robot::Mode::Blending_dev) 
+		) {
+		printf("Default mode: None \n ");
+	}
+
+	switch (mode)
+	{
+		case robot::Mode::None :
+
+			ret = NMC_GroupSetParamI32(this->retDevID, this->devIndex, 0x36, 0, 0);
+			if (ret != ERR_NEXMOTION_SUCCESS) {
+				printf("set mode error code %d\n", ret);
+			}
+			break;
+		case robot::Mode::Buffer :
+
+			ret = NMC_GroupSetParamI32(this->retDevID, this->devIndex, 0x36, 0, 1);
+			if (ret != ERR_NEXMOTION_SUCCESS) {
+				printf("set mode error code %d\n", ret);
+			}
+
+			break;
+		case robot::Mode::Blending_coner:
+
+			ret = NMC_GroupSetParamI32(this->retDevID, this->devIndex, 0x36, 0, 2);
+			if (ret != ERR_NEXMOTION_SUCCESS) {
+				printf("set mode error code %d\n", ret);
+			}
+			ret = NMC_GroupSetParamI32(this->retDevID, this->devIndex, 0x36, 1, 0);
+			if (ret != ERR_NEXMOTION_SUCCESS) {
+				printf("set mode error code %d\n", ret);
+			}
+			ret = NMC_GroupSetParamI32(this->retDevID, this->devIndex, 0x36, 2,20);
+			if (ret != ERR_NEXMOTION_SUCCESS) {
+				printf("set mode error code %d\n", ret);
+			}
+			break;
+		case robot::Mode::Blending_dev:
+			ret = NMC_GroupSetParamI32(this->retDevID, this->devIndex, 0x36, 0, 2);
+			if (ret != ERR_NEXMOTION_SUCCESS) {
+				printf("set mode error code %d\n", ret);
+			}
+			ret = NMC_GroupSetParamI32(this->retDevID, this->devIndex, 0x36, 1, 1);
+			if (ret != ERR_NEXMOTION_SUCCESS) {
+				printf("set mode error code %d\n", ret);
+			}
+			ret = NMC_GroupSetParamI32(this->retDevID, this->devIndex, 0x36, 3, 5);
+			if (ret != ERR_NEXMOTION_SUCCESS) {
+				printf("set mode error code %d\n", ret);
+			}
+			break;
+		default:
+			ret = NMC_GroupSetParamI32(this->retDevID, this->devIndex, 0x36, 0, 0);
+			if (ret != ERR_NEXMOTION_SUCCESS) {
+				printf("set mode error code %d\n", ret);
+			}
+
+			break;
+	}
+
+	return true;
+}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+//getter
+
+
+
+I32_T  robot::get_buffer_size(void) {
+	
+	ret = NMC_GroupGetMotionBuffSpace(this->retDevID , this->devIndex , &(this->buffer_size));
+	if (ret != ERR_NEXMOTION_SUCCESS) {
+		printf("get_buffer_size error code :  %d\n", ret);
+	}
+	return this->buffer_size;
+}
+
+Pos_T robot::get_ptp_pose(void) {
+	Pos_T pose;
+
+	this->ret = NMC_GroupGetActualPosPcs(this->retDevID, this->devIndex, &pose);
+
+	if (ret != ERR_NEXMOTION_SUCCESS) {
+		printf("get_ptp_pose error code :  %d\n", ret);
+	}
+
+	return   pose;
+}
+
+Pos_T robot::get_acs_pose(void) {
+	Pos_T pose;
+
+	this->ret = NMC_GroupGetActualPosAcs(this->retDevID, this->devIndex, &pose);
+
+	if (ret != ERR_NEXMOTION_SUCCESS) {
+		printf("get_ptp_pose error code :  %d\n", ret);
+	}
+
+	return   pose;
+
+}
