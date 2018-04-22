@@ -54,7 +54,7 @@
 
 ## 視覺功能 
 * 在系統中加入視覺辨識功能，支援opencv-contrib擴展的aruco功能，使用前先確認系統環境變數中已經加入了OpenCV_DIR。
-* Apriltag二維條碼。
+* Apriltag二維條碼參考[這裡](https://github.com/EdXian/Apriltag-VS2017)
 * 使用普通的USB網路攝影機即可。
 
 ### 校正
