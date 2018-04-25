@@ -1,6 +1,6 @@
 #  Nexcom - Minibot
 [NexGMC 下載](https://aiotcloud.net/market/singl.php?PID=132)
-
+[專案範例](https://github.com/EdXian/Nexcom-Minibot/tree/v1.1)
 ## 執行環境
  * Windows 10 64-bit i5-7600/8G  
  * Windows 7  32-bit Intel® Celeron 1900 
