@@ -28,22 +28,22 @@ SET(GLOB Sources_ include/*.cpp)
 
 
 
-
+find_package(OpenCV REQUIRED)
 
 #匯入Header文件
 include_directories( 	include
-			${NEXMOTION_INCLUDE_DIR} )			
+			${NEXMOTION_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS} )			
 #建立自訂議Lib					
 add_library(motion_task  "include/motion_task.h" "include/motion_task.cpp")
 #將相依到程式庫匯入到自訂議Lib
 target_link_libraries(motion_task  ${NEXMOTION_LIBS}/NexMotion.lib    )
 
 
-	
+#include_directories( include ${OpenCV_INCLUDE_DIRS} )	
 add_executable (Nexmo "Nexmo.cpp" "Nexmo.h"  )
-target_link_libraries(Nexmo ${NEXMOTION_LIBS}/NexMotion.lib  motion_task )
+target_link_libraries(Nexmo ${NEXMOTION_LIBS}/NexMotion.lib  motion_task ${OpenCV_LIBS} )
 
-find_package(OpenCV REQUIRED)
+
 
 IF(OpenCV_FOUND)
 message(STATUS  "OpenCV IS  FOUND.")

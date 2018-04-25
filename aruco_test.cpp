@@ -1,5 +1,5 @@
 #include "aruco_test.h"
-
+#include <chrono>
 using namespace std;
 using namespace cv;
 using namespace aruco;
@@ -16,14 +16,16 @@ void aruco_thread() {
 	capture = new cv::VideoCapture(camera_id);
 	capture->set(CV_CAP_PROP_FRAME_WIDTH, width);
 	capture->set(CV_CAP_PROP_FRAME_HEIGHT, height);
-
+	int fps = capture->get(CAP_PROP_FPS);
+	printf("Frame rate : %d \n", fps);
 
 	while (true) {
 		//放入數據
+		std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 		*capture >> frame;
 		Mat image = frame;
 
-		resize(image, image, Size(image.cols / 2, image.rows / 2));
+		resize(image, image, Size(image.cols, image.rows));
 		Mat imageCopy;
 		image.copyTo(imageCopy);
 		//載入Aruco用的dictionary ， 會根據這個去偵測在dictionary內有紀錄的Marker
@@ -32,23 +34,21 @@ void aruco_thread() {
 		std::vector<int> ids;     //Marker 的id
 		std::vector<std::vector<cv::Point2f> > corners;
 		cv::aruco::detectMarkers(image, dictionary, corners, ids);  //這個是偵測Aruco的API
-		
-		//以下為相機的校正 ， 應該先校正再做量測
-		cout << "num " << ids.size() << endl;
-		Mat cameraMatrix = (Mat_<double>(3, 3) << 576.88606, 0, 326.23928, 0, 578.34444, 247.88512, 0, 0, 1);
-		//double dist[4]={0.06108,-0.11259,-0.00508,0.00425};
-		//vector<double>  distCoeffs(dist,dist+4);
-		Mat distCoeffs = (Mat_<double>(1, 4) << 0.06108, -0.11259, -0.00508, 0.00425);
 
-		
+																	//以下為相機的校正 ， 應該先校正再做量測
+																	//cout << "num " << ids.size() << endl;
+		Mat cameraMatrix = (Mat_<double>(3, 3) << 826.323941, 0.000000, 330.817699, 0, 827.488990, 261.420381, 0.000, 0.000, 1.0000);
+		Mat distCoeffs = (Mat_<double>(1, 4) << 0.012823, -0.139212, 0.000502, -0.000537);
+
+
 		if (ids.size() > 0)
 		{
 			cout << "num " << ids.size() << endl;
 			cv::aruco::drawDetectedMarkers(imageCopy, corners, ids);
 			vector< Vec3d > rvecs, tvecs;
 			//獲得檢測出的pose向量 tves :為平移向量  rves :為旋轉向量
-			cv::aruco::estimatePoseSingleMarkers(corners, 0.05, cameraMatrix, distCoeffs, rvecs, tvecs);
-			
+			cv::aruco::estimatePoseSingleMarkers(corners, 0.0485, cameraMatrix, distCoeffs, rvecs, tvecs);
+
 			//繪製Marker的邊緣  ，方便觀察
 			for (int i = 0; i<ids.size(); i++)
 			{
@@ -58,10 +58,14 @@ void aruco_thread() {
 
 		}
 		//顯示opencv視窗
-		cv::imshow("out", imageCopy);
-		cvWaitKey(30);
-		//每個30ms執行一次
-		std::this_thread::sleep_for(std::chrono::microseconds(30));
+		std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
+		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << std::endl;
+		//cv::imshow("Aruco偵測視窗", imageCopy);
+		//cvWaitKey(30); //等待esc按下關閉式窗
+
+
+
+		std::this_thread::sleep_for(std::chrono::microseconds(20));//每個30ms執行一次
 
 	}
 
