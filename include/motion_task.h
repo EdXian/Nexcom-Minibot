@@ -7,7 +7,7 @@
 #include <math.h>
 #include <chrono>
 #include <thread>
-
+#include <vector>
 
 #define  sleep_500ms 500
 
@@ -28,9 +28,14 @@ public :
 	 //盽ノ
 	bool launch(I32_T devType, I32_T  devIndex);//╰参秨币
 	bool terminate();                           //╰参闽超
+	
 	bool gotohome();                            //も羥耴
+
 	bool PTP_Until_Task(Pos_T & target);        //翴癸翴北
 	bool LINE_Until_Task(Pos_T & target);       //絬笲笆北
+	
+	bool PTP_Queue_Task(std::vector<Pos_T> & target);
+	bool LINE_Queue_Task(std::vector<Pos_T> & target);
 	bool PTP_Queue_Task(Pos_T & target);					//Buffer 家Αノ
 	bool LINE_Queue_Task(Pos_T & target);					//Buffer 家Αノ
 

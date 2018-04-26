@@ -391,6 +391,8 @@ bool robot::PTP_Queue_Task(Pos_T & target) {
 	
 	return true;
 }
+
+
 bool robot::LINE_Queue_Task(Pos_T & target) {
 	I32_T Group_Axis_Control_Mask = 0;
 	Group_Axis_Control_Mask = NMC_GROUP_AXIS_MASK_X | NMC_GROUP_AXIS_MASK_Y | NMC_GROUP_AXIS_MASK_Z |
@@ -408,8 +410,6 @@ bool robot::LINE_Queue_Task(Pos_T & target) {
 
 	return true;
 
-
-	return true;
 }
 
 

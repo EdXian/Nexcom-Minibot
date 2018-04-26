@@ -10,7 +10,7 @@ void aruco_thread() {
 	cv::Mat frame;
 	int width = 640;
 	int height = 480;
-	int camera_id = 0;
+	int camera_id = 1;
 
 	//使用第一個相機   
 	capture = new cv::VideoCapture(camera_id);
@@ -29,7 +29,7 @@ void aruco_thread() {
 		Mat imageCopy;
 		image.copyTo(imageCopy);
 		//載入Aruco用的dictionary ， 會根據這個去偵測在dictionary內有紀錄的Marker
-		Ptr<aruco::Dictionary> dictionary = getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+		Ptr<aruco::Dictionary> dictionary = getPredefinedDictionary(cv::aruco::DICT_6X6_50);  //目前只使用0~50的id
 
 		std::vector<int> ids;     //Marker 的id
 		std::vector<std::vector<cv::Point2f> > corners;
@@ -43,7 +43,7 @@ void aruco_thread() {
 
 		if (ids.size() > 0)
 		{
-			cout << "num " << ids.size() << endl;
+			//cout << "num " << ids.size() << endl;
 			cv::aruco::drawDetectedMarkers(imageCopy, corners, ids);
 			vector< Vec3d > rvecs, tvecs;
 			//獲得檢測出的pose向量 tves :為平移向量  rves :為旋轉向量
@@ -52,17 +52,19 @@ void aruco_thread() {
 			//繪製Marker的邊緣  ，方便觀察
 			for (int i = 0; i<ids.size(); i++)
 			{
-				cout << "t " << tvecs[i] << endl;
+				cout << "r " << rvecs[i] << endl;
 				cv::aruco::drawAxis(imageCopy, cameraMatrix, distCoeffs, rvecs[i], tvecs[i], 0.1);
 			}
 
 		}
 		//顯示opencv視窗
 		std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
-		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << std::endl;
-		//cv::imshow("Aruco偵測視窗", imageCopy);
-		//cvWaitKey(30); //等待esc按下關閉式窗
-
+		//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << std::endl;
+		cv::imshow("Aruco偵測視窗", imageCopy);
+		
+		int a;
+		a = cvWaitKey(3); //等待esc按下關閉式窗
+		if (a == 27) { break; }
 
 
 		std::this_thread::sleep_for(std::chrono::microseconds(20));//每個30ms執行一次
