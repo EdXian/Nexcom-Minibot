@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 project(minibot)
 
-
+add_subdirectory(kalmanfilter)
 
 #選擇Release
 set(CMAKE_CONFIGURATION_TYPES "Release")
@@ -38,6 +38,7 @@ ENDIF()
 
 #匯入Header文件
 include_directories( 	include
+			kalmanfilter		
 			${NEXMOTION_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS} )			
 #建立自訂議Lib					
 add_library(motion_task  "include/motion_task.h" "include/motion_task.cpp")
