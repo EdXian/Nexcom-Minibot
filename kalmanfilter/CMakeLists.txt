@@ -8,6 +8,6 @@ include_directories(
   ../Eigen
 )
 
-add_library(kalmanfilterlib "KalmanFilter.cpp" "KalmanFilter.h" )
+add_library(kalmanfilter "kalmanFilter.cpp" "kalmanFilter.h" )
 
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)

@@ -48,7 +48,7 @@ target_link_libraries(motion_task  ${NEXMOTION_LIBS}/NexMotion.lib    )
 
 #include_directories( include ${OpenCV_INCLUDE_DIRS} )	
 add_executable (Nexmo "Nexmo.cpp" "Nexmo.h"  )
-target_link_libraries(Nexmo ${NEXMOTION_LIBS}/NexMotion.lib  motion_task ${OpenCV_LIBS} )
+target_link_libraries(Nexmo ${NEXMOTION_LIBS}/NexMotion.lib  motion_task ${OpenCV_LIBS} kalmanfilter )
 
 
 

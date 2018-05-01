@@ -1,15 +1,17 @@
+#include "kalmanFilter.h"
+
 #include <iostream>
-#include "KalmanFilter.h"
+
 using namespace std;
 
 /* Constructor: */
-KalmanFilter::KalmanFilter(int _n,  int _m) {
+kalmanFilter::kalmanFilter(int _n,  int _m) {
 	n = _n;
 	m = _m;
 }
 
 /* Set Fixed Matrix */
-void KalmanFilter::setFixed( MatrixXf _A, MatrixXf _H, MatrixXf _Q, MatrixXf _R ){
+void kalmanFilter::setFixed( MatrixXf _A, MatrixXf _H, MatrixXf _Q, MatrixXf _R ){
 	A = _A;
 	H = _H;
 	Q = _Q;
@@ -18,7 +20,7 @@ void KalmanFilter::setFixed( MatrixXf _A, MatrixXf _H, MatrixXf _Q, MatrixXf _R 
 }
 
 /* Set Fixed Matrix */
-void KalmanFilter::setFixed( MatrixXf _A, MatrixXf _H, MatrixXf _Q, MatrixXf _R, MatrixXf _B ){
+void kalmanFilter::setFixed( MatrixXf _A, MatrixXf _H, MatrixXf _Q, MatrixXf _R, MatrixXf _B ){
 	A = _A;
 	B = _B;
 	H = _H;
@@ -28,14 +30,14 @@ void KalmanFilter::setFixed( MatrixXf _A, MatrixXf _H, MatrixXf _Q, MatrixXf _R,
 }
 
 /* Set Initial Matrix */
-void KalmanFilter::setInitial( VectorXf _X0, MatrixXf _P0 ){
+void kalmanFilter::setInitial( VectorXf _X0, MatrixXf _P0 ){
 	X0 = _X0;
 	P0 = _P0;
 }
 
 /* Do prediction based of physical system (No external input)
 */	 
-void KalmanFilter::predict(void){
+void kalmanFilter::predict(void){
   X = (A * X0);
   P = (A * P0 * A.transpose()) + Q;
 }
@@ -43,7 +45,7 @@ void KalmanFilter::predict(void){
 /* Do prediction based of physical system (with external input)
 * U: Control vector
 */	 
-void KalmanFilter::predict( VectorXf U ){
+void kalmanFilter::predict( VectorXf U ){
   X = (A * X0) + (B * U);
   P = (A * P0 * A.transpose()) + Q;
 }
@@ -51,7 +53,7 @@ void KalmanFilter::predict( VectorXf U ){
 /* Correct the prediction, using mesaurement 
 *  Z: mesaure vector
 */
-void KalmanFilter::correct ( VectorXf Z ) {
+void kalmanFilter::correct ( VectorXf Z ) {
   K = ( P * H.transpose() ) * ( H * P * H.transpose() + R).inverse();
 
   X = X + K*(Z - H * X);

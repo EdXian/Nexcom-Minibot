@@ -31,10 +31,10 @@ include_directories( 	include
 
 IF(OpenCV_FOUND)
 #message(STATUS  "OpenCV IS  FOUND.")
-include_directories( include ${OpenCV_INCLUDE_DIRS} )
+include_directories( include ${OpenCV_INCLUDE_DIRS} ../kalmanfilter ../Eigen ../ )
 
 add_executable (aruco "aruco_test.cpp"  "aruco_test.h")
-target_link_libraries(aruco ${OpenCV_LIBS})
+target_link_libraries(aruco kalmanfilter ${OpenCV_LIBS} )
 
 
 ELSE()	

@@ -8,6 +8,7 @@ int main(int argc, char const *argv[])
 {
 
   /* Set Matrix and Vector for Kalman Filter: */
+
   MatrixXf A(1, 1); A << 1;
   MatrixXf H(1, 1); H << 1;
   MatrixXf Q(1, 1); Q << 0;
